@@ -29,7 +29,6 @@ const App = () => (
               <Route path="/issues/:owner/:repo/:number" element={<IssueDetail />} />
               <Route path="/contributors" element={<Contributors />} />
               <Route path="/analytics" element={<Analytics />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

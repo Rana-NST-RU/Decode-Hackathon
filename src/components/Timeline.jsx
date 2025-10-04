@@ -1,4 +1,3 @@
-import { IssueTimeline } from '@/lib/github-api';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
 import { 
@@ -15,12 +14,8 @@ import {
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 
-interface TimelineProps {
-  events: IssueTimeline[];
-}
-
-export const Timeline = ({ events }: TimelineProps) => {
-  const getEventIcon = (eventType: string) => {
+export const Timeline = ({ events }) => {
+  const getEventIcon = (eventType) => {
     switch (eventType) {
       case 'assigned':
         return <UserPlus className="h-4 w-4" />;
@@ -42,7 +37,7 @@ export const Timeline = ({ events }: TimelineProps) => {
     }
   };
 
-  const getEventColor = (eventType: string) => {
+  const getEventColor = (eventType) => {
     switch (eventType) {
       case 'assigned':
         return 'bg-primary';
@@ -62,7 +57,7 @@ export const Timeline = ({ events }: TimelineProps) => {
     }
   };
 
-  const formatEventDescription = (event: IssueTimeline) => {
+  const formatEventDescription = (event) => {
     switch (event.event) {
       case 'assigned':
         return `Assigned to ${event.assignee?.login || 'someone'}`;
@@ -90,7 +85,6 @@ export const Timeline = ({ events }: TimelineProps) => {
       <h2 className="text-xl font-semibold mb-6">Timeline</h2>
       
       <div className="relative pl-8 space-y-6">
-        {/* Vertical line */}
         <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-border" />
         
         {events.map((event, index) => (
@@ -101,7 +95,6 @@ export const Timeline = ({ events }: TimelineProps) => {
             transition={{ delay: index * 0.1 }}
             className="relative"
           >
-            {/* Event dot */}
             <div className={`absolute -left-[1.875rem] top-1 p-2 rounded-full ${getEventColor(event.event)} text-white shadow-md`}>
               {getEventIcon(event.event)}
             </div>

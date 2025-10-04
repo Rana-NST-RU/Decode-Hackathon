@@ -1,4 +1,3 @@
-import { GitHubIssue, UserActivityData } from '@/lib/github-api';
 import { Badge } from './ui/badge';
 import { Card } from './ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -11,17 +10,9 @@ import { useQuery } from '@tanstack/react-query';
 import { analyzeIssue } from '@/lib/issue-analytics';
 import { githubAPI } from '@/lib/github-api';
 
-interface IssueCardProps {
-  issue: GitHubIssue;
-  repoOwner: string;
-  repoName: string;
-  index: number;
-}
-
-export const IssueCard = ({ issue, repoOwner, repoName, index }: IssueCardProps) => {
+export const IssueCard = ({ issue, repoOwner, repoName, index }) => {
   const activityStatus = issue.assignee ? getActivityStatus(issue.updated_at) : null;
   
-  // Fetch user activity data for AI analysis
   const { data: userActivity } = useQuery({
     queryKey: ['user-activity', repoOwner, repoName, issue.assignee?.login],
     queryFn: async () => {
@@ -29,7 +20,7 @@ export const IssueCard = ({ issue, repoOwner, repoName, index }: IssueCardProps)
       return await githubAPI.getUserActivity(repoOwner, repoName, issue.assignee.login);
     },
     enabled: !!issue.assignee && issue.state === 'open',
-    staleTime: 10 * 60 * 1000, // Cache for 10 minutes
+    staleTime: 10 * 60 * 1000,
   });
 
   const { data: analysis } = useQuery({
@@ -39,7 +30,7 @@ export const IssueCard = ({ issue, repoOwner, repoName, index }: IssueCardProps)
       return await analyzeIssue(issue, userActivity, { avgTimeToClose: userActivity.avgTimeToClose, openIssues: userActivity.openIssues });
     },
     enabled: !!issue.assignee && issue.state === 'open' && !!userActivity,
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 
   const getStatusBadge = () => {
@@ -182,7 +173,7 @@ export const IssueCard = ({ issue, repoOwner, repoName, index }: IssueCardProps)
                           <div className="flex items-center gap-1">
                             <Brain className="h-3 w-3 text-primary" />
                             <span className="text-muted-foreground">
-                              AI Prediction: <span className={`font-semibold ${getCompletionColor(analysis.completionProbability)}`}>
+                              Prediction: <span className={`font-semibold ${getCompletionColor(analysis.completionProbability)}`}>
                                 {analysis.completionProbability}%
                               </span>
                             </span>

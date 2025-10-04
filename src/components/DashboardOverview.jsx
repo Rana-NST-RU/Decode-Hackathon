@@ -17,30 +17,10 @@ import {
   Target
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { githubAPI, GitHubIssue, UserActivityData } from '@/lib/github-api';
+import { githubAPI } from '@/lib/github-api';
 import { formatDistanceToNow } from 'date-fns';
 
-interface DashboardOverviewProps {
-  repoOwner: string;
-  repoName: string;
-}
-
-interface DashboardStats {
-  totalIssues: number;
-  openIssues: number;
-  staleIssues: number;
-  assignedIssues: number;
-  avgTimeToClose: number;
-  topContributors: UserActivityData[];
-  recentActivity: any[];
-  aiInsights: {
-    highRiskIssues: number;
-    predictedCompletions: number;
-    recommendedActions: string[];
-  };
-}
-
-export const DashboardOverview = ({ repoOwner, repoName }: DashboardOverviewProps) => {
+export const DashboardOverview = ({ repoOwner, repoName }) => {
   const [lastRefresh, setLastRefresh] = useState(new Date());
 
   const { data: issues, isLoading: issuesLoading } = useQuery({
@@ -48,7 +28,7 @@ export const DashboardOverview = ({ repoOwner, repoName }: DashboardOverviewProp
     queryFn: async () => {
       return await githubAPI.getIssues(repoOwner, repoName, { state: 'all', per_page: 100 });
     },
-    refetchInterval: 5 * 60 * 1000, // Refresh every 5 minutes
+    refetchInterval: 5 * 60 * 1000,
   });
 
   const { data: contributors } = useQuery({
@@ -61,14 +41,13 @@ export const DashboardOverview = ({ repoOwner, repoName }: DashboardOverviewProp
 
   const { data: dashboardStats, isLoading: statsLoading } = useQuery({
     queryKey: ['dashboard-stats', repoOwner, repoName, issues],
-    queryFn: async (): Promise<DashboardStats> => {
-      if (!issues || !contributors) return {} as DashboardStats;
+    queryFn: async () => {
+      if (!issues || !contributors) return {};
 
       const openIssues = issues.filter(issue => issue.state === 'open');
       const staleIssues = openIssues.filter(issue => githubAPI.isStaleIssue(issue));
       const assignedIssues = openIssues.filter(issue => issue.assignee || issue.assignees.length > 0);
 
-      // Get top contributors with activity data
       const topContributors = await Promise.all(
         contributors.slice(0, 5).map(async (contributor) => {
           try {
@@ -79,19 +58,17 @@ export const DashboardOverview = ({ repoOwner, repoName }: DashboardOverviewProp
         })
       );
 
-      const validContributors = topContributors.filter(Boolean) as UserActivityData[];
+      const validContributors = topContributors.filter(Boolean);
 
-      // Calculate average time to close
       const closedIssues = issues.filter(issue => issue.state === 'closed');
       const avgTimeToClose = closedIssues.length > 0 
         ? closedIssues.reduce((sum, issue) => {
             const created = new Date(issue.created_at);
-            const closed = new Date(issue.closed_at!);
+            const closed = new Date(issue.closed_at);
             return sum + (closed.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
           }, 0) / closedIssues.length
         : 0;
 
-      // AI insights
       const highRiskIssues = staleIssues.length;
       const predictedCompletions = assignedIssues.filter(issue => {
         const daysSinceUpdate = (Date.now() - new Date(issue.updated_at).getTime()) / (1000 * 60 * 60 * 24);
@@ -102,7 +79,7 @@ export const DashboardOverview = ({ repoOwner, repoName }: DashboardOverviewProp
         highRiskIssues > 5 ? 'Consider reassigning stale issues' : null,
         predictedCompletions < assignedIssues.length * 0.3 ? 'Low completion rate detected' : null,
         avgTimeToClose > 14 ? 'Average completion time is high' : null,
-      ].filter(Boolean) as string[];
+      ].filter(Boolean);
 
       return {
         totalIssues: issues.length,
@@ -124,7 +101,6 @@ export const DashboardOverview = ({ repoOwner, repoName }: DashboardOverviewProp
 
   const handleRefresh = () => {
     setLastRefresh(new Date());
-    // Trigger refetch of all queries
     window.location.reload();
   };
 
@@ -148,7 +124,6 @@ export const DashboardOverview = ({ repoOwner, repoName }: DashboardOverviewProp
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Dashboard Overview</h2>
@@ -166,7 +141,6 @@ export const DashboardOverview = ({ repoOwner, repoName }: DashboardOverviewProp
         </div>
       </div>
 
-      {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -241,7 +215,6 @@ export const DashboardOverview = ({ repoOwner, repoName }: DashboardOverviewProp
         </motion.div>
       </div>
 
-      {/* Progress Indicators */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -294,7 +267,6 @@ export const DashboardOverview = ({ repoOwner, repoName }: DashboardOverviewProp
         </motion.div>
       </div>
 
-      {/* AI Insights */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -304,7 +276,7 @@ export const DashboardOverview = ({ repoOwner, repoName }: DashboardOverviewProp
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Brain className="h-5 w-5 text-primary" />
-              <h3 className="font-semibold">AI Insights & Recommendations</h3>
+              <h3 className="font-semibold">Insights & Recommendations</h3>
             </div>
             
             {dashboardStats.aiInsights.recommendedActions.length > 0 ? (
@@ -326,7 +298,6 @@ export const DashboardOverview = ({ repoOwner, repoName }: DashboardOverviewProp
         </Card>
       </motion.div>
 
-      {/* Top Contributors */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

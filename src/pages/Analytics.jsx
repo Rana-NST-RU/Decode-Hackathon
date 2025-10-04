@@ -19,7 +19,7 @@ export default function Analytics() {
   const [searchParams] = useSearchParams();
   const repoParam = searchParams.get('repo');
 
-  const parseRepo = (repo: string | null) => {
+  const parseRepo = (repo) => {
     if (!repo) return null;
     const [owner, name] = repo.split('/');
     return owner && name ? { owner, name } : null;
@@ -147,7 +147,6 @@ export default function Analytics() {
         </motion.div>
       )}
 
-      {/* Stats Grid */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {stats.map((stat, index) => (
           <motion.div
@@ -171,7 +170,6 @@ export default function Analytics() {
         ))}
       </div>
 
-      {/* Additional Metrics */}
       <div className="grid md:grid-cols-2 gap-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <Card className="p-6">
@@ -234,7 +232,6 @@ export default function Analytics() {
         </motion.div>
       </div>
 
-      {/* Repository Health Summary */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mt-8">
         <Card className="p-8 bg-gradient-hero border-primary/20">
           <h3 className="text-2xl font-bold mb-4">Repository Health Summary</h3>

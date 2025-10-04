@@ -102,9 +102,7 @@ export default function IssueDetail() {
         </Button>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Header */}
             <div className="space-y-4">
               <div className="flex items-start gap-4">
                 <h1 className="text-3xl font-bold flex-1">{issue.title}</h1>
@@ -128,14 +126,13 @@ export default function IssueDetail() {
               </div>
             </div>
 
-            {/* AI Insights */}
             {(isStale || analysis) && (
               <Card className={`p-6 ${isStale ? 'bg-destructive/5 border-destructive/20' : 'bg-primary/5 border-primary/20'}`}>
                 <div className="flex gap-4">
                   <Brain className={`h-6 w-6 flex-shrink-0 mt-1 ${isStale ? 'text-destructive' : 'text-primary'}`} />
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
-                      {isStale ? '⚠️ Stale Issue Detected' : '🧠 AI Analysis'}
+                      {isStale ? '⚠️ Stale Issue Detected' : '🧠 Analysis'}
                     </h3>
                     
                     {isStale && (
@@ -183,7 +180,6 @@ export default function IssueDetail() {
               </Card>
             )}
 
-            {/* Description */}
             <Card className="p-6">
               <div className="flex items-center gap-3 mb-4">
                 <Avatar>
@@ -214,7 +210,6 @@ export default function IssueDetail() {
               )}
             </Card>
 
-            {/* Timeline */}
             <IssueTimeline issue={issue} />
             
             {timelineLoading ? (
@@ -231,9 +226,7 @@ export default function IssueDetail() {
             )}
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-6">
-            {/* Quick Actions */}
             <Card className="p-6 space-y-4">
               <h3 className="font-semibold">Quick Actions</h3>
               <Button className="w-full gap-2" asChild>
@@ -244,11 +237,9 @@ export default function IssueDetail() {
               </Button>
             </Card>
 
-            {/* Details */}
             <Card className="p-6 space-y-4">
               <h3 className="font-semibold">Details</h3>
 
-              {/* Assignee */}
               <div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                   <User className="h-4 w-4" />
@@ -294,7 +285,6 @@ export default function IssueDetail() {
 
               <Separator />
 
-              {/* PR Status */}
               <div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                   <GitPullRequest className="h-4 w-4" />
@@ -318,7 +308,6 @@ export default function IssueDetail() {
 
               <Separator />
 
-              {/* Comments */}
               <div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                   <MessageSquare className="h-4 w-4" />
@@ -327,7 +316,6 @@ export default function IssueDetail() {
                 <p className="text-sm font-medium">{issue.comments} comments</p>
               </div>
 
-              {/* Labels */}
               {issue.labels.length > 0 && (
                 <>
                   <Separator />

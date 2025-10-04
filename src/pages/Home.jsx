@@ -77,7 +77,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-hero py-20 sm:py-32">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(147,51,234,0.1),transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(251,146,60,0.1),transparent_50%)]" />
@@ -149,7 +148,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="py-20 container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -189,7 +187,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20 container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}

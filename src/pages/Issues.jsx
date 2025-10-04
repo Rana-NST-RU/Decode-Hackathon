@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { githubAPI, GitHubIssue } from '@/lib/github-api';
+import { githubAPI } from '@/lib/github-api';
 import { IssueCard } from '@/components/IssueCard';
 import { StaleIssuesAlert } from '@/components/StaleIssuesAlert';
 import { DashboardOverview } from '@/components/DashboardOverview';
@@ -19,10 +19,10 @@ export default function Issues() {
   const repoParam = searchParams.get('repo');
   
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'open' | 'closed'>('all');
-  const [sortBy, setSortBy] = useState<'updated' | 'created' | 'comments'>('updated');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('updated');
   
-  const parseRepo = (repo: string | null) => {
+  const parseRepo = (repo) => {
     if (!repo) return null;
     const [owner, name] = repo.split('/');
     return owner && name ? { owner, name } : null;
@@ -155,7 +155,6 @@ export default function Issues() {
         </motion.div>
       )}
 
-      {/* Notification System */}
       {contributorsWithActivity && (
         <NotificationSystem 
           staleIssues={staleIssues}
@@ -165,14 +164,12 @@ export default function Issues() {
         />
       )}
 
-      {/* Stale Issues Alert */}
       <StaleIssuesAlert 
         issues={staleIssues} 
         repoOwner={repo.owner} 
         repoName={repo.name} 
       />
 
-      {/* Tabs for Dashboard and Issues */}
       <Tabs defaultValue="dashboard" className="space-y-6">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="dashboard" className="gap-2">
@@ -190,7 +187,6 @@ export default function Issues() {
         </TabsContent>
 
         <TabsContent value="issues">
-          {/* Filters */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -207,7 +203,7 @@ export default function Issues() {
                 />
               </div>
               
-              <Select value={statusFilter} onValueChange={(v: any) => setStatusFilter(v)}>
+              <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v)}>
                 <SelectTrigger className="w-full sm:w-[180px]">
                   <Filter className="h-4 w-4 mr-2" />
                   <SelectValue />
@@ -219,7 +215,7 @@ export default function Issues() {
                 </SelectContent>
               </Select>
 
-              <Select value={sortBy} onValueChange={(v: any) => setSortBy(v)}>
+              <Select value={sortBy} onValueChange={(v) => setSortBy(v)}>
                 <SelectTrigger className="w-full sm:w-[180px]">
                   <SelectValue />
                 </SelectTrigger>
@@ -232,7 +228,6 @@ export default function Issues() {
             </div>
           </motion.div>
 
-          {/* Issues List */}
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />

@@ -1,16 +1,10 @@
-import { GitHubIssue } from '@/lib/github-api';
 import { Card } from './ui/card';
 import { Clock, UserPlus, GitPullRequest, CheckCircle2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
-interface IssueTimelineProps {
-  issue: GitHubIssue;
-}
-
-export const IssueTimeline = ({ issue }: IssueTimelineProps) => {
+export const IssueTimeline = ({ issue }) => {
   const events = [];
 
-  // Issue created
   events.push({
     icon: Clock,
     label: 'Issue opened',
@@ -18,17 +12,15 @@ export const IssueTimeline = ({ issue }: IssueTimelineProps) => {
     user: issue.user.login
   });
 
-  // Assigned
   if (issue.assignee) {
     events.push({
       icon: UserPlus,
       label: `Assigned to ${issue.assignee.login}`,
-      date: new Date(issue.updated_at), // Approximation
+      date: new Date(issue.updated_at),
       user: issue.assignee.login
     });
   }
 
-  // PR linked
   if (issue.pull_request) {
     events.push({
       icon: GitPullRequest,
@@ -38,7 +30,6 @@ export const IssueTimeline = ({ issue }: IssueTimelineProps) => {
     });
   }
 
-  // Closed
   if (issue.state === 'closed' && issue.closed_at) {
     events.push({
       icon: CheckCircle2,

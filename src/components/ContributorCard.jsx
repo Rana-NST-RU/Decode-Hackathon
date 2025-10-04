@@ -1,4 +1,3 @@
-import { UserActivityData } from '@/lib/github-api';
 import { Card } from './ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
@@ -7,14 +6,7 @@ import { motion } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 import { getActivityBadgeColor } from '@/lib/issue-analytics';
 
-interface ContributorCardProps {
-  contributor: UserActivityData;
-  repoOwner: string;
-  repoName: string;
-  index: number;
-}
-
-export const ContributorCard = ({ contributor, repoOwner, repoName, index }: ContributorCardProps) => {
+export const ContributorCard = ({ contributor, repoOwner, repoName, index }) => {
   const getBadge = () => {
     if (contributor.reliabilityScore > 80) {
       return (
@@ -73,7 +65,6 @@ export const ContributorCard = ({ contributor, repoOwner, repoName, index }: Con
     >
       <Card className="p-6 hover:shadow-lg transition-all duration-300 hover:border-primary/50 bg-gradient-card">
         <div className="space-y-4">
-          {/* Header */}
           <div className="flex items-center gap-4">
             <div className="relative">
               <Avatar className="h-12 w-12 border-2 border-primary/20">
@@ -99,7 +90,6 @@ export const ContributorCard = ({ contributor, repoOwner, repoName, index }: Con
             </div>
           </div>
 
-          {/* Stats Grid */}
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="space-y-1">
               <div className="flex items-center gap-1 text-muted-foreground">
@@ -146,7 +136,6 @@ export const ContributorCard = ({ contributor, repoOwner, repoName, index }: Con
             </div>
           </div>
 
-          {/* Activity Pattern */}
           <div className="pt-2 border-t">
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">Activity Pattern</span>

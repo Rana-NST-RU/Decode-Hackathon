@@ -1,4 +1,3 @@
-import { GitHubIssue } from '@/lib/github-api';
 import { Card } from './ui/card';
 import { AlertCircle, Clock } from 'lucide-react';
 import { Badge } from './ui/badge';
@@ -6,13 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
-interface StaleIssuesAlertProps {
-  issues: GitHubIssue[];
-  repoOwner: string;
-  repoName: string;
-}
-
-export const StaleIssuesAlert = ({ issues, repoOwner, repoName }: StaleIssuesAlertProps) => {
+export const StaleIssuesAlert = ({ issues, repoOwner, repoName }) => {
   if (issues.length === 0) return null;
 
   return (

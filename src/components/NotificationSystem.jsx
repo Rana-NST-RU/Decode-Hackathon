@@ -5,33 +5,14 @@ import { motion } from 'framer-motion';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { GitHubIssue, UserActivityData } from '@/lib/github-api';
-
-interface NotificationSystemProps {
-  staleIssues: GitHubIssue[];
-  contributors: UserActivityData[];
-  repoOwner: string;
-  repoName: string;
-}
-
-interface Notification {
-  id: string;
-  type: 'stale' | 'activity' | 'completion' | 'risk';
-  title: string;
-  message: string;
-  timestamp: Date;
-  severity: 'low' | 'medium' | 'high';
-  action?: string;
-  actionUrl?: string;
-}
 
 export const NotificationSystem = ({ 
   staleIssues, 
   contributors, 
   repoOwner, 
   repoName 
-}: NotificationSystemProps) => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+}) => {
+  const [notifications, setNotifications] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
@@ -39,9 +20,8 @@ export const NotificationSystem = ({
   }, [staleIssues, contributors]);
 
   const generateNotifications = () => {
-    const newNotifications: Notification[] = [];
+    const newNotifications = [];
 
-    // Stale issue notifications
     staleIssues.forEach(issue => {
       const daysSinceUpdate = Math.floor(
         (Date.now() - new Date(issue.updated_at).getTime()) / (1000 * 60 * 60 * 24)
@@ -72,7 +52,6 @@ export const NotificationSystem = ({
       }
     });
 
-    // Low activity contributor notifications
     contributors.forEach(contributor => {
       if (contributor.activityPattern === 'low' && contributor.openIssues > 0) {
         newNotifications.push({
@@ -88,7 +67,6 @@ export const NotificationSystem = ({
       }
     });
 
-    // High reliability contributors
     const topContributors = contributors
       .filter(c => c.reliabilityScore > 80)
       .slice(0, 3);
@@ -109,7 +87,7 @@ export const NotificationSystem = ({
     setNotifications(newNotifications);
   };
 
-  const getNotificationIcon = (type: string) => {
+  const getNotificationIcon = (type) => {
     switch (type) {
       case 'stale': return <AlertTriangle className="h-4 w-4" />;
       case 'activity': return <Users className="h-4 w-4" />;
@@ -119,7 +97,7 @@ export const NotificationSystem = ({
     }
   };
 
-  const getSeverityColor = (severity: string) => {
+  const getSeverityColor = (severity) => {
     switch (severity) {
       case 'high': return 'text-destructive border-destructive/20 bg-destructive/5';
       case 'medium': return 'text-warning border-warning/20 bg-warning/5';
@@ -128,7 +106,7 @@ export const NotificationSystem = ({
     }
   };
 
-  const dismissNotification = (id: string) => {
+  const dismissNotification = (id) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
   };
 
@@ -226,7 +204,7 @@ export const NotificationSystem = ({
                           size="sm"
                           className="text-xs"
                           onClick={() => {
-                            if (notification.actionUrl?.startsWith('/')) {
+                            if (notification.actionUrl.startsWith('/')) {
                               window.location.href = notification.actionUrl;
                             } else {
                               window.open(notification.actionUrl, '_blank');

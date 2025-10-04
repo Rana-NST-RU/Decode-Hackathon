@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { githubAPI, UserActivityData } from '@/lib/github-api';
+import { githubAPI } from '@/lib/github-api';
 import { ContributorCard } from '@/components/ContributorCard';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -17,10 +17,10 @@ export default function Contributors() {
   const repoParam = searchParams.get('repo');
   
   const [searchTerm, setSearchTerm] = useState('');
-  const [activityFilter, setActivityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
-  const [sortBy, setSortBy] = useState<'contributions' | 'reliability' | 'activity'>('contributions');
+  const [activityFilter, setActivityFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('contributions');
   
-  const parseRepo = (repo: string | null) => {
+  const parseRepo = (repo) => {
     if (!repo) return null;
     const [owner, name] = repo.split('/');
     return owner && name ? { owner, name } : null;
@@ -39,7 +39,7 @@ export default function Contributors() {
 
   const { data: contributorsWithActivity, isLoading: activityLoading } = useQuery({
     queryKey: ['contributors-activity', repo?.owner, repo?.name, contributors],
-    queryFn: async (): Promise<UserActivityData[]> => {
+    queryFn: async () => {
       if (!contributors || !repo) return [];
       
       const activityData = await Promise.all(
@@ -53,10 +53,10 @@ export default function Contributors() {
         })
       );
       
-      return activityData.filter(Boolean) as UserActivityData[];
+      return activityData.filter(Boolean);
     },
     enabled: !!contributors && !!repo,
-    staleTime: 10 * 60 * 1000, // Cache for 10 minutes
+    staleTime: 10 * 60 * 1000,
   });
 
   const { data: repoData } = useQuery({
@@ -148,7 +148,6 @@ export default function Contributors() {
         </motion.div>
       )}
 
-      {/* Stats Overview */}
       {stats && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -199,7 +198,6 @@ export default function Contributors() {
         </motion.div>
       )}
 
-      {/* Filters */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -216,7 +214,7 @@ export default function Contributors() {
             />
           </div>
           
-          <Select value={activityFilter} onValueChange={(v: any) => setActivityFilter(v)}>
+          <Select value={activityFilter} onValueChange={(v) => setActivityFilter(v)}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue />
@@ -229,7 +227,7 @@ export default function Contributors() {
             </SelectContent>
           </Select>
 
-          <Select value={sortBy} onValueChange={(v: any) => setSortBy(v)}>
+          <Select value={sortBy} onValueChange={(v) => setSortBy(v)}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue />
             </SelectTrigger>
@@ -242,7 +240,6 @@ export default function Contributors() {
         </div>
       </motion.div>
 
-      {/* Contributors List */}
       {(contributorsLoading || activityLoading) ? (
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
